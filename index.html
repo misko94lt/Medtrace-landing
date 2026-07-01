@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MedTrace — Gestionale per l'assistenza di apparecchiature elettromedicali</title>
+<meta name="description" content="Apparecchi, interventi, verifiche con verbale in PDF, etichette QR e un portale dove i clienti si servono da soli. Fatto da un tecnico biomedicale. Funziona anche offline.">
+<link rel="icon" type="image/png" href="img/icon.png">
+<link rel="apple-touch-icon" href="img/icon.png">
+<!-- Anteprima quando condividi il link (WhatsApp, LinkedIn…). Punta all'indirizzo Vercel: quando avrai un dominio tuo, aggiorna og:image e og:url -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="MedTrace — Gestionale per l'assistenza di apparecchiature elettromedicali">
+<meta property="og:description" content="Apparecchi, interventi, verifiche con verbale in PDF, etichette QR e portale clienti. Fatto da un tecnico biomedicale. Funziona anche offline.">
+<meta property="og:image" content="https://medtrace-landing.vercel.app/img/dashboard.jpg">
+<meta property="og:url" content="https://medtrace-landing.vercel.app/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script>
+/* Tema iniziale dal sistema, prima del paint (niente flash) */
+(function(){
+  var dark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
+})();
+</script>
+<style>
+/* ───────────────────────── TOKENS ───────────────────────── */
+:root{
+  --accent:#2DD4BF; --accent-deep:#0F766E; --ok:#22C55E; --warn:#F59E0B;
+  --r:14px; --maxw:1080px;
+  --f-display:"IBM Plex Sans",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+[data-theme="light"]{
+  --bg:#F6F8F9; --surface:#FFFFFF; --surface2:#FCFDFD;
+  --border:#E3E9ED; --border2:#D3DCE2;
+  --text:#10171E; --text2:#46535F; --text3:#8593A0;
+  --frame:#0F141A; --chip:#0F766E12; --acc-text:#0F766E;
+  --shadow:0 14px 40px rgba(16,30,40,.10);
+}
+[data-theme="dark"]{
+  --bg:#0B0E13; --surface:#12161D; --surface2:#161B24;
+  --border:#1F2733; --border2:#2A3543;
+  --text:#EDF1F5; --text2:#9AA7B4; --text3:#5C6A78;
+  --frame:#06080B; --chip:#2DD4BF12; --acc-text:#2DD4BF;
+  --shadow:0 16px 48px rgba(0,0,0,.45);
+}
+/* ───────────────────────── BASE ───────────────────────── */
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--f-body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;transition:background .25s,color .25s}
+a{color:var(--acc-text);text-decoration:none}
+img{display:block;max-width:100%;height:auto}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px}
+.mono{font-family:var(--f-mono)}
+h1,h2,h3{font-family:var(--f-display);letter-spacing:-.015em}
+section{padding:72px 0;scroll-margin-top:78px}
+.eyebrow{font-size:11.5px;font-weight:600;letter-spacing:.12em;color:var(--acc-text);text-transform:uppercase;margin-bottom:14px}
+.sec-t{font-size:clamp(26px,4vw,34px);font-weight:700;margin-bottom:10px}
+.sec-s{color:var(--text2);max-width:620px;margin-bottom:36px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+svg.ic-line{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+/* ───────────────────────── NAV ───────────────────────── */
+nav{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.nav-in{display:flex;align-items:center;gap:18px;height:62px}
+.logo{display:flex;align-items:center;gap:9px;font-family:var(--f-display);font-weight:700;font-size:18px;color:var(--text)}
+.logo svg{width:34px;height:34px}
+.nav-links{display:flex;gap:20px;margin-left:auto;font-size:13.5px;font-weight:600}
+.nav-links a{color:var(--text2)}
+.nav-links a:hover{color:var(--acc-text)}
+.nav-links a.active{color:var(--acc-text)}
+.nav-tools{display:flex;align-items:center;gap:9px;margin-left:6px}
+.lang{display:flex;border:1px solid var(--border2);border-radius:9px;overflow:hidden}
+.lang button{background:transparent;border:0;color:var(--text3);font:600 12px var(--f-mono);padding:6px 10px;cursor:pointer}
+.lang button[aria-pressed="true"]{background:var(--chip);color:var(--acc-text)}
+.theme-btn,.menu-btn{background:transparent;border:1px solid var(--border2);border-radius:9px;width:35px;height:31px;cursor:pointer;font-size:15px;line-height:1;color:var(--text);display:flex;align-items:center;justify-content:center}
+.theme-btn svg{width:15px;height:15px}
+[data-theme="dark"] .icon-moon{display:none}
+[data-theme="light"] .icon-sun{display:none}
+.menu-btn{display:none}
+.mobile-menu{display:none;position:fixed;top:62px;left:0;right:0;z-index:49;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow);flex-direction:column;padding:6px 0 10px}
+.mobile-menu.open{display:flex}
+.mobile-menu a{padding:13px 26px;font-size:15px;font-weight:600;color:var(--text);border-top:1px solid var(--border)}
+.mobile-menu a:first-child{border-top:none}
+.mobile-menu a span{color:var(--text3);font:600 11px var(--f-mono);margin-right:12px}
+@media(max-width:760px){.nav-links{display:none}.menu-btn{display:flex}.nav-tools{margin-left:auto}}
+/* ───────────────────────── HERO ───────────────────────── */
+.hero{padding:84px 0 64px}
+.hero-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:54px;align-items:center}
+@media(max-width:880px){.hero-grid{grid-template-columns:1fr;gap:46px}}
+h1{font-size:clamp(34px,5.2vw,50px);font-weight:700;line-height:1.1;margin-bottom:18px}
+h1 em{font-style:normal;color:var(--acc-text)}
+.hero-sub{color:var(--text2);font-size:17.5px;max-width:540px;margin-bottom:28px}
+.cta-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.cta-note{font-size:12px;color:var(--text3);margin-bottom:24px}
+.btn{display:inline-block;font:600 15px var(--f-body);border-radius:11px;padding:13px 24px;cursor:pointer;border:1px solid transparent;transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-1px)}
+.btn-p{background:linear-gradient(135deg,#2DD4BF,#0D9488);color:#04211D;box-shadow:0 8px 22px rgba(20,170,150,.28)}
+.btn-g{border-color:var(--border2);color:var(--text)}
+.chips{display:flex;gap:9px;flex-wrap:wrap}
+.chip{font:500 12.5px var(--f-body);color:var(--acc-text);background:var(--chip);border:1px solid color-mix(in srgb,var(--accent) 26%,transparent);border-radius:99px;padding:6px 13px}
+/* ── elemento firma: verbale che si compila ── */
+.verbale{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);padding:22px 22px 26px;max-width:420px;margin:0 auto}
+.vb-head{font:600 11.5px var(--f-mono);color:var(--text3);letter-spacing:.06em;border-bottom:1px dashed var(--border2);padding-bottom:12px;margin-bottom:14px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.vb-head b{color:var(--acc-text)}
+.vrow{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:baseline;padding:9px 0;border-bottom:1px solid var(--border);opacity:0;transform:translateY(7px);animation:vIn .5s ease forwards}
+.vrow:nth-child(2){animation-delay:.25s}.vrow:nth-child(3){animation-delay:.6s}.vrow:nth-child(4){animation-delay:.95s}
+.vrow .lbl{font-size:13.5px;color:var(--text2)}
+.vrow .val{font:600 14px var(--f-mono);color:var(--text)}
+.vrow .lim{font:400 11.5px var(--f-mono);color:var(--text3)}
+.vrow .lim s{color:var(--ok);text-decoration:none;margin-left:6px;font-weight:600}
+.vb-foot{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-top:16px}
+.vb-cap{font:400 11px var(--f-mono);color:var(--text3);text-align:left;flex:1;min-width:150px}
+.stamp{font:700 17px var(--f-display);letter-spacing:.07em;color:var(--ok);border:3px solid var(--ok);border-radius:9px;padding:5px 13px;transform:rotate(-6deg) scale(1.4);opacity:0;animation:stampIn .4s cubic-bezier(.2,1.5,.4,1) 1.45s forwards;background:color-mix(in srgb,var(--ok) 7%,transparent)}
+@keyframes vIn{to{opacity:1;transform:none}}
+@keyframes stampIn{to{opacity:1;transform:rotate(-6deg) scale(1)}}
+/* ── onda divisoria ── */
+.wave{display:block;width:100%;height:42px;opacity:.5}
+/* ───────────────────────── FUNZIONI ───────────────────────── */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:880px){.cards{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.cards{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:22px;transition:border-color .2s,transform .2s}
+.card:hover{border-color:color-mix(in srgb,var(--accent) 45%,var(--border));transform:translateY(-2px)}
+.card .ic{color:var(--acc-text);margin-bottom:13px}
+.card .ic svg{width:25px;height:25px}
+.card h3{font-size:16.5px;font-weight:600;margin-bottom:7px}
+.card p{font-size:14px;color:var(--text2)}
+/* ───────────────────────── SCREENSHOT ───────────────────────── */
+.shots{display:flex;gap:22px;overflow-x:auto;scroll-snap-type:x mandatory;padding:12px 4px 20px;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+.shot{flex:0 0 auto;width:min(70vw,260px);scroll-snap-align:center}
+@media(max-width:560px){
+  .phone{border-width:6px;border-radius:26px}
+  .phone img{border-radius:19px}
+  .shot figcaption{font-size:11.5px}
+}
+.phone{border:9px solid var(--frame);border-radius:36px;overflow:hidden;box-shadow:var(--shadow);background:var(--frame)}
+.phone img{border-radius:26px;width:100%;height:auto}
+.shot figcaption{font:500 12px var(--f-body);color:var(--text3);text-align:center;margin-top:12px}
+/* ───────────────────────── PORTALE / STORIA ───────────────────────── */
+.split{display:grid;grid-template-columns:.9fr 1.1fr;gap:52px;align-items:center}
+@media(max-width:880px){.split{grid-template-columns:1fr;gap:40px}}
+.ticks{list-style:none;display:grid;gap:14px}
+.ticks li{display:flex;gap:12px;font-size:15px;color:var(--text2)}
+.ticks li b{color:var(--text)}
+.ticks .tk{color:var(--ok);font-weight:700;flex:0 0 auto}
+.story{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:var(--r);padding:30px 30px;max-width:760px;margin:0 auto}
+.story p{color:var(--text2);font-size:16px}
+.story b{color:var(--text)}
+/* ───────────────────────── PREZZI ───────────────────────── */
+.plans{display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:780px;margin:0 auto}
+@media(max-width:700px){.plans{grid-template-columns:1fr}}
+.plan{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:28px}
+.plan.hot{border-color:color-mix(in srgb,var(--accent) 55%,var(--border));box-shadow:var(--shadow)}
+.plan .name{font:600 13px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--acc-text);margin-bottom:12px}
+.plan .price{font-family:var(--f-display);font-size:36px;font-weight:700}
+.plan .per{color:var(--text3);font-size:13px;margin-bottom:16px}
+.plan ul{list-style:none;display:grid;gap:9px;margin:16px 0 22px}
+.plan li{font-size:14px;color:var(--text2);display:flex;gap:9px}
+.plan li::before{content:"✓";color:var(--ok);font-weight:700}
+.pr-note{text-align:center;font:400 12.5px var(--f-body);color:var(--text3);margin-top:20px}
+/* ───────────────────────── FAQ / CTA / FOOTER ───────────────────────── */
+.faq{max-width:760px;margin:0 auto;display:grid;gap:10px}
+details{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 20px}
+summary{cursor:pointer;font-weight:600;font-size:15px;list-style:none;display:flex;justify-content:space-between;gap:10px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";color:var(--acc-text);font:600 18px var(--f-mono)}
+details[open] summary::after{content:"–"}
+details p{color:var(--text2);font-size:14px;margin-top:10px}
+.final{background:var(--surface2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);text-align:center}
+footer{padding:34px 0 42px;color:var(--text3);font-size:13px}
+.foot-in{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;align-items:center}
+/* ───────────────────────── REVEAL / MOTION ───────────────────────── */
+.rv{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease}
+.rv.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  .vrow,.stamp{opacity:1;transform:rotate(-6deg)}
+  .vrow{transform:none}
+  .rv{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+<!-- ════════════════════════════════════════════════════════════════
+  ☑ PRIMA DI PUBBLICARE — restano 2 segnaposto:
+  1) info@ESEMPIO.it  → la vostra email
+  2) P.IVA nel footer (obbligatoria per legge sui siti commerciali)
+═════════════════════════════════════════════════════════════════ -->
+
+<nav>
+  <div class="wrap nav-in">
+    <a class="logo" href="#top" aria-label="MedTrace">
+      <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="#2DD4BF" stroke-linecap="round" stroke-linejoin="round"><path d="M8 24 Q13 14 18 24 Q23 34 28 24" stroke-width="2.6"/><path d="M3 24 Q11 10 18 24 Q25 38 33 24" stroke-width="2.6"/><circle cx="40" cy="24" r="3.6" fill="#2DD4BF" stroke="none"/></g></svg>
+      Med<span style="color:var(--acc-text)">Trace</span>
+    </a>
+    <div class="nav-links">
+      <a href="#servizi" data-i18n="nav.sv">Servizi</a>
+      <a href="#funzioni" data-i18n="nav.f">Funzioni</a>
+      <a href="#screenshot" data-i18n="nav.sh">Schermate</a>
+      <a href="#portale" data-i18n="nav.p">Portale clienti</a>
+      <a href="#prezzi" data-i18n="nav.pr">Prezzi</a>
+      <a href="#faq">FAQ</a>
+      <a href="https://medtrace-demo.vercel.app/">Demo</a>
+    </div>
+    <div class="nav-tools">
+      <div class="lang" role="group" aria-label="Lingua / Language">
+        <button id="lang-it" aria-pressed="true">IT</button>
+        <button id="lang-en" aria-pressed="false">EN</button>
+      </div>
+      <button class="theme-btn" id="theme-btn" aria-label="Cambia tema">
+        <svg class="ic-line icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg class="ic-line icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      </button>
+      <button class="menu-btn" id="menu-btn" aria-label="Menu" aria-expanded="false">☰</button>
+    </div>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobile-menu">
+  <a href="#funzioni"><span>01</span><span data-i18n="nav.f">Funzioni</span></a>
+  <a href="#screenshot"><span>02</span><span data-i18n="nav.sh">Schermate</span></a>
+  <a href="#portale"><span>03</span><span data-i18n="nav.p">Portale clienti</span></a>
+  <a href="#prezzi"><span>04</span><span data-i18n="nav.pr">Prezzi</span></a>
+  <a href="#faq"><span>05</span>FAQ</a>
+  <a href="https://medtrace-demo.vercel.app/"><span>06</span>Demo</a>
+  <a href="mailto:info@ESEMPIO.it"><span>07</span><span data-i18n="nav.ct">Contatti</span></a>
+</div>
+
+<header class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow" data-i18n="hero.eye">Assistenza tecnica e software per apparecchiature elettromedicali</div>
+      <h1 data-i18n="hero.h1">Le apparecchiature elettromedicali, <em>sotto controllo</em>.</h1>
+      <p class="hero-sub" data-i18n="hero.sub">Facciamo verifiche di sicurezza elettrica, manutenzione e riparazioni per le strutture sanitarie del territorio. E il gestionale che usiamo ogni giorno — verifiche, verbali PDF, scadenze, portale clienti — lo puoi usare anche tu.</p>
+      <div class="cta-row">
+        <a class="btn btn-p" href="#servizi" data-i18n="hero.cta1">Scopri i servizi</a>
+        <a class="btn btn-g" href="https://medtrace-demo.vercel.app/" data-i18n="hero.cta2">Prova la demo</a>
+      </div>
+      <div class="cta-note" data-i18n="cta.note">La demo si apre nel browser, senza registrazione.</div>
+      <div class="chips">
+        <span class="chip" data-i18n="chip1">Verifiche con esito</span>
+        <span class="chip" data-i18n="chip2">Verbali in PDF</span>
+        <span class="chip" data-i18n="chip3">Funziona offline</span>
+        <span class="chip" data-i18n="chip4">Portale clienti</span>
+        <span class="chip" data-i18n="chip5">Importi da Excel</span>
+      </div>
+    </div>
+    <div>
+      <div class="verbale" aria-hidden="true">
+        <div class="vb-head"><span><b>VSE-2026-001</b> · IEC 62353</span><span data-i18n="vb.cls">Classe I · BF</span></div>
+        <div class="vrow"><span class="lbl" data-i18n="vb1">Resistenza conduttore PE</span><span class="val">0,12 Ω</span><span class="lim">≤ 0,3 Ω<s>✓</s></span></div>
+        <div class="vrow"><span class="lbl" data-i18n="vb2">Dispersione apparecchio</span><span class="val">84 µA</span><span class="lim">≤ 500 µA<s>✓</s></span></div>
+        <div class="vrow" style="border-bottom:none"><span class="lbl" data-i18n="vb3">Parte applicata BF</span><span class="val">31 µA</span><span class="lim">≤ 5000 µA<s>✓</s></span></div>
+        <div class="vb-foot">
+          <div class="vb-cap" data-i18n="vb.cap">Limiti già impostati, esito calcolato dall'app.</div>
+          <div class="stamp" data-i18n="vb.stamp">CONFORME</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<svg class="wave" viewBox="0 0 1200 40" preserveAspectRatio="none" aria-hidden="true"><path d="M0 20 Q 75 0 150 20 T 300 20 T 450 20 T 600 20 T 750 20 T 900 20 T 1050 20 T 1200 20" fill="none" stroke="var(--accent)" stroke-width="1.6"/></svg>
+
+<section id="servizi" style="padding-top:44px">
+  <div class="wrap">
+    <div class="eyebrow">Per studi dentistici, cliniche e veterinari · Trieste e FVG</div>
+    <h2 class="sec-t rv">I tuoi apparecchi medicali, a norma e sotto controllo</h2>
+    <p class="sec-s rv">Verifiche di sicurezza elettrica, prove funzionali, manutenzione e riparazioni. Con un portale dove vedi lo stato di ogni macchina e scarichi i certificati quando vuoi — anche durante un'ispezione.</p>
+    <div class="rv" style="max-width:760px;margin:8px auto 30px;background:var(--chip);border:1px solid var(--border2);border-radius:var(--r);padding:14px 18px;color:var(--text2);line-height:1.55"><b style="color:var(--acc-text)">È un obbligo di legge.</b> Il D.Lgs 81/08 e la norma CEI EN 62353 impongono verifiche periodiche degli elettromedicali: a un controllo ASL o NAS devi poter esibire il verbale. Ci pensiamo noi.</div>
+    <div class="cards">
+      <div class="card rv"><h3>Verifiche di sicurezza elettrica</h3><p>Su tutte le marche, secondo CEI EN 62353, con verbale e valori di misura. Strumenti tarati e tracciabili.</p></div>
+      <div class="card rv"><h3>Prove funzionali</h3><p>Pompe, defibrillatori, ventilatori, elettrobisturi, monitor: verifichiamo che funzionino come devono.</p></div>
+      <div class="card rv"><h3>Manutenzione e riparazioni</h3><p>Preventiva e correttiva sulle marche su cui siamo certificati dal costruttore; per le altre gestiamo noi l'intervento (referente unico).</p></div>
+      <div class="card rv"><h3>Portale e scadenzario</h3><p>Censimento del parco, scadenze e certificati sempre online. Niente più faldoni da cercare prima di un controllo.</p></div>
+    </div>
+    <div class="eyebrow" style="text-align:center;margin-top:44px">Quanto costa</div>
+    <h2 class="sec-t rv" style="text-align:center">Dipende da quanti apparecchi hai</h2>
+    <p class="sec-s rv" style="text-align:center">Il prezzo si calcola sul numero e sul tipo di apparecchi del tuo studio. Prima ne parliamo insieme — cosa possiamo seguire noi direttamente e cosa conviene coordinare col costruttore — poi il preventivo è su misura e gratuito.</p>
+
+    <div class="eyebrow" style="text-align:center;margin-top:36px">A prestazione, per apparecchio</div>
+    <div class="cards">
+      <div class="card rv"><h3>Verifica di sicurezza elettrica</h3><div style="font-family:var(--f-mono);font-size:21px;font-weight:700;color:var(--acc-text);margin:4px 0 8px">da 30 €<span style="font-size:12.5px;color:var(--text3);font-weight:400"> / apparecchio</span></div><p>CEI EN 62353, su ogni marca, con verbale. A volume da 25 €. Diritto di chiamata 40-60 €.</p></div>
+      <div class="card rv"><h3>Prova funzionale</h3><div style="font-family:var(--f-mono);font-size:21px;font-weight:700;color:var(--acc-text);margin:4px 0 8px">60-200 €<span style="font-size:12.5px;color:var(--text3);font-weight:400"> / apparecchio</span></div><p>Secondo il tipo: pompe, defibrillatori, ventilatori, elettrobisturi, monitor.</p></div>
+      <div class="card rv"><h3>Manutenzione preventiva</h3><div style="font-family:var(--f-mono);font-size:21px;font-weight:700;color:var(--acc-text);margin:4px 0 8px">da 80 €<span style="font-size:12.5px;color:var(--text3);font-weight:400"> / apparecchio</span></div><p>Solo sulle marche su cui siamo certificati. Per le altre, referente unico col costruttore.</p></div>
+      <div class="card rv"><h3>Riparazioni</h3><div style="font-family:var(--f-mono);font-size:21px;font-weight:700;color:var(--acc-text);margin:4px 0 8px">50-70 €<span style="font-size:12.5px;color:var(--text3);font-weight:400"> / ora</span></div><p>Più ricambi senza ricarico, minimo ~80 €. Preventivo prima dell'intervento.</p></div>
+    </div>
+
+    <div class="eyebrow" style="text-align:center;margin-top:44px">Oppure tutto a canone annuo</div>
+    <h2 class="sec-t rv" style="text-align:center">Contratti “Conformità Studio”</h2>
+    <p class="sec-s rv" style="text-align:center">Un canone unico per non pensarci, calcolato sul tuo parco apparecchi. Scegli quanto ci occupiamo noi — i livelli sono un punto di partenza, non una gabbia.</p>
+    <div class="plans" style="margin-top:28px">
+      <div class="plan rv">
+        <div class="name">Essenziale</div>
+        <div class="price">400-650<span style="font-size:16px;color:var(--text3)">€/anno</span></div>
+        <div class="per">calcolato sul numero di apparecchi</div>
+        <ul><li>Censimento e portale clienti</li><li>Verifiche di sicurezza elettrica periodiche</li><li>Scadenzario e certificati online</li></ul>
+        <a class="btn btn-g" href="mailto:info@ESEMPIO.it">Richiedi preventivo</a>
+      </div>
+      <div class="plan hot rv">
+        <div class="name">Completo</div>
+        <div class="price">800-1.300<span style="font-size:16px;color:var(--text3)">€/anno</span></div>
+        <div class="per">il riferimento · sul parco</div>
+        <ul><li>Tutto di Essenziale</li><li>+ Prove funzionali programmate</li><li>+ Manutenzione preventiva (marche che seguiamo)</li><li>+ Interventi inclusi entro un massimale</li></ul>
+        <a class="btn btn-p" href="mailto:info@ESEMPIO.it">Richiedi preventivo</a>
+      </div>
+      <div class="plan rv">
+        <div class="name">Total Care</div>
+        <div class="price">1.500-2.500<span style="font-size:16px;color:var(--text3)">€/anno</span></div>
+        <div class="per">gestione ampia · sul parco</div>
+        <ul><li>Gestione del parco che seguiamo direttamente</li><li>entro un massimale annuo concordato</li><li>marche non seguite: coordiniamo il costruttore</li></ul>
+        <a class="btn btn-g" href="mailto:info@ESEMPIO.it">Richiedi preventivo</a>
+      </div>
+    </div>
+    <div class="pr-note"><b>Esempio:</b> studio con ~15 apparecchi (riunito, compressore, RX, piccoli strumenti) → in genere livello Essenziale, ~450-600 €/anno. Prezzi indicativi 2026, IVA esclusa; il preventivo è sempre personalizzato e gratuito.</div>
+
+    <div class="pr-note" style="background:var(--chip);border:1px solid var(--border2);border-radius:var(--r);padding:12px 16px;color:var(--text);font-weight:600;margin-bottom:10px"><b>Il primo passo è gratuito</b> — veniamo nel tuo studio, inventariamo le macchine e ti diciamo cosa è a norma e cosa manca. Senza impegno.</div>
+    <div style="text-align:center;margin-top:20px"><a class="btn btn-p" href="mailto:info@ESEMPIO.it">Richiedi il censimento gratuito</a></div>
+  </div>
+</section>
+
+<svg class="wave" viewBox="0 0 1200 40" preserveAspectRatio="none" aria-hidden="true"><path d="M0 20 Q 75 0 150 20 T 300 20 T 450 20 T 600 20 T 750 20 T 900 20 T 1050 20 T 1200 20" fill="none" stroke="var(--accent)" stroke-width="1.6"/></svg>
+
+<section id="funzioni">
+  <div class="wrap">
+    <div class="eyebrow" data-i18n="sec.f.e">Il software, per i tecnici</div>
+    <h2 class="sec-t rv" data-i18n="sec.f.t">Tutto il lavoro in un posto solo</h2>
+    <p class="sec-s rv" data-i18n="sec.f.s">Apparecchi, scadenze, manutenzioni, interventi, ricambi, verifiche e portale clienti.</p>
+    <div class="cards">
+      <div class="card rv"><div class="ic"><svg class="ic-line" viewBox="0 0 24 24"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg></div><h3 data-i18n="f1t">Verifiche di sicurezza elettrica</h3><p data-i18n="f1d">Scegli l'apparecchio e il tipo di prova: misure e limiti sono già impostati. Inserisci i valori, l'esito si calcola da solo e il verbale è pronto da firmare.</p></div>
+      <div class="card rv"><div class="ic"><svg class="ic-line" viewBox="0 0 24 24"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg></div><h3 data-i18n="f2t">Verifiche funzionali</h3><p data-i18n="f2d">Liste di controllo pronte per defibrillatori, ventilatori, pompe, ecografi, riuniti e altre famiglie, con valori attesi e voci N/A. E puoi creare le tue.</p></div>
+      <div class="card rv"><div class="ic"><svg class="ic-line" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/><path d="m9 15 2 2 4-4"/></svg></div><h3 data-i18n="f10t">Manutenzione programmata</h3><p data-i18n="f10d">In un'unica sessione fai manutenzione, verifica funzionale e sicurezza elettrica: un solo verbale PDF con tutto, e le prossime scadenze si aggiornano da sole. Protocolli pronti per modello.</p></div>
+      <div class="card rv"><div class="ic"><svg class="ic-line" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div><h3 data-i18n="f3t">Interventi e ricambi</h3><p data-i18n="f3d">Priorità, ore, trasferte, ricambi usati e foto. Magazzino con scorte minime, così il pezzo c'è quando serve.</p></div>
+      <div class="card rv"><div class="ic"><svg class="ic-line" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM21 14v2M14 21h2M19 19h2v2h-2z"/></svg></div><h3 data-i18n="f4t">Etichette QR</h3><p data-i18n="f4d">Stampi l'etichetta con codice e QR direttamente dall'app. Chi inquadra il codice apre la scheda dell'apparecchio, sempre aggiornata.</p></div>
+      <div class="card rv"><div class="ic"><svg class="ic-line" viewBox="0 0 24 24"><path d="m2 2 20 20"/><path d="M5.8 5.8A7 7 0 0 0 9 19h8.5c.66 0 1.3-.14 1.87-.4"/><path d="M21.54 16.36A4.5 4.5 0 0 0 17.5 10h-1.8A7 7 0 0 0 9.3 5"/></svg></div><h3 data-i18n="f5t">Funziona offline</h3><p data-i18n="f5d">In cantina o in sala macchine la rete non c'è: lavori lo stesso e sincronizzi dopo. Parti dal tuo Excel: importi apparecchi e scadenze e l'app riconosce le colonne da sola. Backup ed export quando vuoi — i dati sono tuoi.</p></div>
+      <div class="card rv"><div class="ic"><svg class="ic-line" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><h3 data-i18n="f6t">Portale clienti</h3><p data-i18n="f6d">Ogni cliente vede i suoi apparecchi, manda richieste di intervento e scarica i suoi verbali in PDF, sempre aggiornati.</p></div>
+      <div class="card rv"><div class="ic"><svg class="ic-line" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M12 8.5v4"/><path d="M12 16h.01"/></svg></div><h3 data-i18n="f7t">Avvisi di sicurezza</h3><p data-i18n="f7d">Registri i richiami e gli avvisi di sicurezza dei produttori (FSN) e colleghi gli apparecchi coinvolti. Per ognuno segni l'azione fatta, così sai sempre cosa resta da sistemare.</p></div>
+      <div class="card rv"><div class="ic"><svg class="ic-line" viewBox="0 0 24 24"><path d="M3 6v5.5a2 2 0 0 0 .6 1.4l8 8a2 2 0 0 0 2.8 0l5.5-5.5a2 2 0 0 0 0-2.8l-8-8A2 2 0 0 0 11.5 3H5a2 2 0 0 0-2 2z"/><path d="M7.5 7.5h.01"/></svg></div><h3 data-i18n="f8t">Catalogo CND</h3><p data-i18n="f8d">Ogni apparecchio classificato col codice CND del Ministero della Salute: lo cerchi per nome e l'app compila CND, EMDN e CIVAB. Poi filtri e raggruppi per categoria.</p></div>
+      <div class="card rv"><div class="ic"><svg class="ic-line" viewBox="0 0 24 24"><path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9"/><path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5"/><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5"/><path d="M19.1 4.9C23 8.8 23 15.2 19.1 19.1"/></svg></div><h3 data-i18n="f9t">Tracciamento RFID</h3><p data-i18n="f9d">Inventari e ricognizioni in pochi secondi con tag UHF RFID: passi il lettore e gli apparecchi si registrano da soli.</p><span data-i18n="soon" style="display:inline-block;font-size:11px;font-weight:600;color:var(--acc-text);background:color-mix(in srgb,var(--accent) 14%,transparent);border:1px solid color-mix(in srgb,var(--accent) 35%,var(--border));border-radius:999px;padding:2px 9px;margin-top:11px">In sviluppo</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="screenshot" style="padding-top:24px">
+  <div class="wrap">
+    <div class="eyebrow" data-i18n="sec.sh.e">L'app</div>
+    <h2 class="sec-t rv" data-i18n="sec.sh.t">Qualche schermata</h2>
+    <div class="shots">
+      <figure class="shot rv"><div class="phone"><img src="img/dashboard.jpg" alt="Dashboard MedTrace" width="880" height="1716" loading="lazy"></div><figcaption data-i18n="sh1">Dashboard e scadenze</figcaption></figure>
+      <figure class="shot rv"><div class="phone"><img src="img/verifica.jpg" alt="Verifica di sicurezza elettrica" width="880" height="1821" loading="lazy"></div><figcaption data-i18n="sh2">Verifica con esito</figcaption></figure>
+      <figure class="shot rv"><div class="phone"><img src="img/lista.jpg" alt="Elenco verbali" width="880" height="1716" loading="lazy"></div><figcaption data-i18n="sh3">Elenco verbali</figcaption></figure>
+      <figure class="shot rv"><div class="phone"><img src="img/scheda.jpg" alt="Scheda apparecchio" width="880" height="1582" loading="lazy"></div><figcaption data-i18n="sh4">Scheda apparecchio</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section id="portale" class="final">
+  <div class="wrap split" style="text-align:left">
+    <div class="rv">
+      <div class="phone" style="max-width:250px;margin:0 auto"><img src="img/portale.jpg" alt="Portale clienti MedTrace" width="880" height="1716" loading="lazy"></div>
+    </div>
+    <div>
+      <div class="eyebrow" data-i18n="sec.p.e">Meno telefonate</div>
+      <h2 class="sec-t rv" data-i18n="sec.p.t">Il cliente si serve da solo</h2>
+      <p class="sec-s rv" data-i18n="sec.p.s">Ogni tuo cliente ha il suo accesso, in sola lettura e sempre aggiornato.</p>
+      <ul class="ticks">
+        <li class="rv"><span class="tk">✓</span><span data-i18n="p1"><b>Verbali in PDF</b> — il cliente li scarica quando gli servono, anche durante un'ispezione.</span></li>
+        <li class="rv"><span class="tk">✓</span><span data-i18n="p2"><b>Solo versioni definitive</b> — il verbale arriva nel portale quando è completo e firmato: lo stesso identico documento che resta in archivio.</span></li>
+        <li class="rv"><span class="tk">✓</span><span data-i18n="p3"><b>Richieste di intervento</b> con foto e urgenza, direttamente dall'apparecchio.</span></li>
+        <li class="rv"><span class="tk">✓</span><span data-i18n="p4"><b>QR sull'etichetta</b> — inquadri e si apre la scheda della macchina.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="story rv">
+      <div class="eyebrow" data-i18n="st.e">Da dove viene</div>
+      <p data-i18n="st.d"><b>MedTrace nasce come strumento di lavoro, non come prodotto.</b> L'hanno costruito un tecnico biomedicale di Trieste — con cinque anni in un grande ospedale privato di Londra (gruppo HCA Healthcare), fino al ruolo senior — e una laureata in Ingegneria Clinica, con esperienza al Ministero della Salute sulla classificazione dei dispositivi medici (CND/EMDN). Lo usiamo ogni giorno sul campo e cresce in base a quello che serve davvero. Chi lo adotta parla direttamente con chi lo ha scritto.</p>
+    </div>
+  </div>
+</section>
+
+<section id="prezzi">
+  <div class="wrap">
+    <div class="eyebrow" style="text-align:center" data-i18n="sec.pr.e">Il software</div>
+    <h2 class="sec-t rv" style="text-align:center" data-i18n="sec.pr.t">Prezzi del software</h2>
+    <div class="plans" style="margin-top:34px">
+      <div class="plan rv">
+        <div class="name" data-i18n="pl1.name">Freelance</div>
+        <div class="price">€340<span style="font-size:16px;color:var(--text3)" data-i18n="pl.yr">/anno</span></div>
+        <div class="per" data-i18n="pl1.per">1 tecnico · prezzo di lancio · listino €490</div>
+        <ul>
+          <li data-i18n="pl1.b1">Tutte le verifiche con esito + verbali PDF</li>
+          <li data-i18n="pl1.b2">Manutenzione programmata e scadenze</li>
+          <li data-i18n="pl1.b3">Offline · importi ed esporti da Excel</li>
+        </ul>
+        <a class="btn btn-g" href="mailto:info@ESEMPIO.it" data-i18n="pl1.cta">Parliamone</a>
+      </div>
+      <div class="plan hot rv">
+        <div class="name" data-i18n="pl2.name">Team</div>
+        <div class="price">€890<span style="font-size:16px;color:var(--text3)" data-i18n="pl.yr">/anno</span></div>
+        <div class="per" data-i18n="pl2.per">2-5 tecnici · prezzo di lancio · listino €1.200</div>
+        <ul>
+          <li data-i18n="pl2.b1">Tutto di Freelance, per più tecnici</li>
+          <li data-i18n="pl2.b2">Portale clienti incluso</li>
+          <li data-i18n="pl2.b3">Magazzino ricambi e interventi</li>
+        </ul>
+        <a class="btn btn-p" href="mailto:info@ESEMPIO.it" data-i18n="pl2.cta">Parliamone</a>
+      </div>
+      <div class="plan rv">
+        <div class="name" data-i18n="pl3.name">Su misura</div>
+        <div class="price" data-i18n="pl3.price">Su preventivo</div>
+        <div class="per" data-i18n="pl3.per">da €2.500/anno</div>
+        <ul>
+          <li data-i18n="pl3.b1">Utenti illimitati</li>
+          <li data-i18n="pl3.b2">Portale con il tuo logo (white-label)</li>
+          <li data-i18n="pl3.b3">Per strutture grandi e subappaltatori</li>
+        </ul>
+        <a class="btn btn-g" href="mailto:info@ESEMPIO.it" data-i18n="pl3.cta">Contattaci</a>
+      </div>
+    </div>
+    <div class="pr-note" data-i18n="pl.free" style="background:var(--chip);border:1px solid var(--border2);border-radius:var(--r);padding:12px 16px;color:var(--text2);font-weight:500;margin-bottom:10px">Cerchiamo 2-3 partner iniziali: MedTrace completo gratis in cambio di feedback e una testimonianza. Posti limitati.</div>
+    <div class="pr-note" data-i18n="pr.note">Prezzi IVA esclusa · attivazione in giornata · assistenza e aggiornamenti inclusi in tutti i piani</div>
+  </div>
+</section>
+
+<section id="faq" style="padding-top:24px">
+  <div class="wrap">
+    <h2 class="sec-t rv" style="text-align:center;margin-bottom:34px">FAQ</h2>
+    <div class="faq">
+      <details class="rv"><summary data-i18n="q1">Devo installare qualcosa?</summary><p data-i18n="a1">No: MedTrace è una web-app (PWA). La apri dal browser e la aggiungi alla schermata Home di telefono, tablet o PC — si comporta come un'app, senza store e senza installazioni.</p></details>
+      <details class="rv"><summary data-i18n="q2">Funziona senza internet?</summary><p data-i18n="a2">Sì. Dopo il primo accesso lavori anche completamente offline: i dati restano sul dispositivo e si sincronizzano col cloud quando torni in rete.</p></details>
+      <details class="rv"><summary data-i18n="q3">Di chi sono i dati?</summary><p data-i18n="a3">Tuoi. Ogni azienda vede solo i propri dati: nessun altro tecnico o società ha accesso ai tuoi clienti. Li esporti quando vuoi (backup completo ed Excel), il cloud è su server europei, e se un giorno smetti porti via tutto.</p></details>
+      <details class="rv"><summary data-i18n="q4">Quali verifiche copre?</summary><p data-i18n="a4">Le verifiche di sicurezza elettrica su apparecchi elettromedicali e strumentazione da laboratorio (IEC 62353, 60601-1, 61010-1), con limiti ed esito automatici, e le verifiche funzionali con liste di controllo per le famiglie di apparecchi più comuni.</p></details>
+      <details class="rv"><summary data-i18n="q5">Quanti apparecchi può gestire?</summary><p data-i18n="a5">Migliaia, senza rallentare. I dati stanno sul dispositivo in un archivio locale capiente e si sincronizzano col cloud (server europei) quando sei online.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="final">
+  <div class="wrap" style="max-width:640px">
+    <h2 class="sec-t rv" data-i18n="cta.t">Prova la demo</h2>
+    <p class="sec-s rv" style="margin:0 auto 28px" data-i18n="cta.s">Ha dati realistici già caricati: apri una verifica, genera un verbale, dai un'occhiata al portale.</p>
+    <a class="btn btn-p rv" href="https://medtrace-demo.vercel.app/" data-i18n="cta.b">Apri la demo →</a>
+  </div>
+</section>
+
+<footer id="contatti">
+  <div class="wrap foot-in">
+    <span data-i18n="ft.tag">MedTrace · Trieste, Italia · costruito da chi fa assistenza biomedica sul campo</span>
+    <span><a href="mailto:info@ESEMPIO.it">info@ESEMPIO.it</a> · <a href="privacy.html">Privacy e Termini</a> · <span class="mono">© 2026 · P.IVA —</span></span>
+  </div>
+</footer>
+
+<script>
+/* ───────────── i18n ───────────── */
+const I18N = {
+  it: {
+    "t.title":"MedTrace — Gestionale per l'assistenza di apparecchiature elettromedicali",
+    "t.desc":"Apparecchi, interventi, verifiche con verbale in PDF, etichette QR e un portale dove i clienti si servono da soli. Fatto da un tecnico biomedicale. Funziona anche offline.",
+    "nav.f":"Funzioni","nav.sh":"Schermate","nav.p":"Portale clienti","nav.pr":"Prezzi","nav.sv":"Servizi","nav.ct":"Contatti",
+    "hero.eye":"Assistenza tecnica e software per apparecchiature elettromedicali",
+    "hero.h1":"Le apparecchiature elettromedicali, <em>sotto controllo</em>.",
+    "hero.sub":"Facciamo verifiche di sicurezza elettrica, manutenzione e riparazioni per le strutture sanitarie del territorio. E il gestionale che usiamo ogni giorno — verifiche, verbali PDF, scadenze, portale clienti — lo puoi usare anche tu.",
+    "hero.cta1":"Scopri i servizi","hero.cta2":"Prova la demo",
+    "cta.note":"La demo si apre nel browser, senza registrazione.",
+    "chip1":"Verifiche con esito","chip2":"Verbali in PDF","chip3":"Funziona offline","chip4":"Portale clienti","chip5":"Importi da Excel",
+    "vb.cls":"Classe I · BF","vb1":"Resistenza conduttore PE","vb2":"Dispersione apparecchio","vb3":"Parte applicata BF",
+    "vb.stamp":"CONFORME","vb.cap":"Limiti già impostati, esito calcolato dall'app.",
+    "sec.f.e":"Il software, per i tecnici","sec.f.t":"Tutto il lavoro in un posto solo",
+    "sec.f.s":"Apparecchi, scadenze, manutenzioni, interventi, ricambi, verifiche e portale clienti.",
+    "f1t":"Verifiche di sicurezza elettrica","f1d":"Scegli l'apparecchio e il tipo di prova: misure e limiti sono già impostati. Inserisci i valori, l'esito si calcola da solo e il verbale è pronto da firmare.",
+    "f2t":"Verifiche funzionali","f2d":"Liste di controllo pronte per defibrillatori, ventilatori, pompe, ecografi, riuniti e altre famiglie, con valori attesi e voci N/A. E puoi creare le tue.","f10t":"Manutenzione programmata","f10d":"In un'unica sessione fai manutenzione, verifica funzionale e sicurezza elettrica: un solo verbale PDF con tutto, e le prossime scadenze si aggiornano da sole. Protocolli pronti per modello.",
+    "f3t":"Interventi e ricambi","f3d":"Priorità, ore, trasferte, ricambi usati e foto. Magazzino con scorte minime, così il pezzo c'è quando serve.",
+    "f4t":"Etichette QR","f4d":"Stampi l'etichetta con codice e QR direttamente dall'app. Chi inquadra il codice apre la scheda dell'apparecchio, sempre aggiornata.",
+    "f5t":"Funziona offline","f5d":"In cantina o in sala macchine la rete non c'è: lavori lo stesso e sincronizzi dopo. Parti dal tuo Excel: importi apparecchi e scadenze e l'app riconosce le colonne da sola. Backup ed export quando vuoi — i dati sono tuoi.",
+    "f6t":"Portale clienti","f6d":"Ogni cliente vede i suoi apparecchi, manda richieste di intervento e scarica i suoi verbali in PDF, sempre aggiornati.",
+    "f7t":"Avvisi di sicurezza","f7d":"Registri i richiami e gli avvisi di sicurezza dei produttori (FSN) e colleghi gli apparecchi coinvolti. Per ognuno segni l'azione fatta, così sai sempre cosa resta da sistemare.",
+    "f8t":"Catalogo CND","f8d":"Ogni apparecchio classificato col codice CND del Ministero della Salute: lo cerchi per nome e l'app compila CND, EMDN e CIVAB. Poi filtri e raggruppi per categoria.",
+    "f9t":"Tracciamento RFID","f9d":"Inventari e ricognizioni in pochi secondi con tag UHF RFID: passi il lettore e gli apparecchi si registrano da soli.","soon":"In sviluppo",
+    "sec.sh.e":"L'app","sec.sh.t":"Qualche schermata",
+    "sh1":"Dashboard e scadenze","sh2":"Verifica con esito","sh3":"Elenco verbali","sh4":"Scheda apparecchio","sh5":"Accesso del cliente al portale",
+    "sec.p.e":"Meno telefonate","sec.p.t":"Il cliente si serve da solo",
+    "sec.p.s":"Ogni tuo cliente ha il suo accesso, in sola lettura e sempre aggiornato.",
+    "p1":"<b>Verbali in PDF</b> — il cliente li scarica quando gli servono, anche durante un'ispezione.",
+    "p2":"<b>Solo versioni definitive</b> — il verbale arriva nel portale quando è completo e firmato: lo stesso identico documento che resta in archivio.",
+    "p3":"<b>Richieste di intervento</b> con foto e urgenza, direttamente dall'apparecchio.",
+    "p4":"<b>QR sull'etichetta</b> — inquadri e si apre la scheda della macchina.",
+    "st.e":"Da dove viene",
+    "st.d":"<b>MedTrace nasce come strumento di lavoro, non come prodotto.</b> L'hanno costruito un tecnico biomedicale di Trieste — con cinque anni in un grande ospedale privato di Londra (gruppo HCA Healthcare), fino al ruolo senior — e una laureata in Ingegneria Clinica, con esperienza al Ministero della Salute sulla classificazione dei dispositivi medici (CND/EMDN). Lo usiamo ogni giorno sul campo e cresce in base a quello che serve davvero. Chi lo adotta parla direttamente con chi lo ha scritto.",
+    "sec.pr.e":"Il software","sec.pr.t":"Prezzi del software","pl1.name":"Freelance","pl1.per":"1 tecnico · prezzo di lancio · listino €490","pl1.b1":"Tutte le verifiche con esito + verbali PDF","pl1.b2":"Manutenzione programmata e scadenze","pl1.b3":"Offline · importi ed esporti da Excel","pl1.cta":"Parliamone","pl2.name":"Team","pl2.per":"2-5 tecnici · prezzo di lancio · listino €1.200","pl2.b1":"Tutto di Freelance, per più tecnici","pl2.b2":"Portale clienti incluso","pl2.b3":"Magazzino ricambi e interventi","pl2.b4":"Aggiornamenti e assistenza","pl2.cta":"Parliamone","pl3.name":"Su misura","pl3.price":"Su preventivo","pl3.per":"da €2.500/anno","pl3.b1":"Utenti illimitati","pl3.b2":"Portale con il tuo logo (white-label)","pl3.b3":"Per strutture grandi e subappaltatori","pl3.cta":"Contattaci","pl.yr":"/anno","pl.free":"Cerchiamo 2-3 partner iniziali: MedTrace completo gratis in cambio di feedback e una testimonianza. Posti limitati.",
+    "pr1.price":"Gratis","pr1.per":"per le prime ditte",
+    "pr1.b1":"MedTrace completo, tutto incluso","pr1.b2":"In cambio di feedback sul prodotto","pr1.b3":"Posti limitati","pr1.cta":"Candidati",
+    "pr2.per":"per organizzazione · prezzo di lancio",
+    "pr2.b1":"Tecnici della tua ditta inclusi","pr2.b2":"Portale clienti incluso","pr2.b3":"Aggiornamenti e assistenza","pr2.b4":"Dati sempre esportabili (backup, Excel)","pr2.cta":"Parliamone",
+    "pr.note":"Prezzi IVA esclusa · attivazione in giornata · assistenza e aggiornamenti inclusi in tutti i piani",
+    "q1":"Devo installare qualcosa?","a1":"No: MedTrace è una web-app (PWA). La apri dal browser e la aggiungi alla schermata Home di telefono, tablet o PC — si comporta come un'app, senza store e senza installazioni.",
+    "q2":"Funziona senza internet?","a2":"Sì. Dopo il primo accesso lavori anche completamente offline: i dati restano sul dispositivo e si sincronizzano col cloud quando torni in rete.",
+    "q3":"Di chi sono i dati?","a3":"Tuoi. Ogni azienda vede solo i propri dati: nessun altro tecnico o società ha accesso ai tuoi clienti. Li esporti quando vuoi (backup completo ed Excel), il cloud è su server europei, e se un giorno smetti porti via tutto.",
+    "q4":"Quali verifiche copre?","a4":"Le verifiche di sicurezza elettrica su apparecchi elettromedicali e strumentazione da laboratorio (IEC 62353, 60601-1, 61010-1), con limiti ed esito automatici, e le verifiche funzionali con liste di controllo per le famiglie di apparecchi più comuni.",
+    "q5":"Quanti apparecchi può gestire?","a5":"Migliaia, senza rallentare. I dati stanno sul dispositivo in un archivio locale capiente e si sincronizzano col cloud (server europei) quando sei online.",
+    "cta.t":"Prova la demo",
+    "cta.s":"Ha dati realistici già caricati: apri una verifica, genera un verbale, dai un'occhiata al portale.",
+    "cta.b":"Apri la demo →",
+    "ft.tag":"MedTrace · Trieste, Italia · costruito da chi fa assistenza biomedica sul campo",
+    "aria.theme":"Cambia tema","aria.menu":"Menu"
+  },
+  en: {
+    "t.title":"MedTrace — Service software for medical equipment",
+    "t.desc":"Assets, work orders, safety tests with PDF reports, QR labels and a portal where clients help themselves. Built by a biomedical technician. Works offline too.",
+    "nav.f":"Features","nav.sh":"Screenshots","nav.p":"Client portal","nav.pr":"Pricing","nav.sv":"Services","nav.ct":"Contact",
+    "hero.eye":"Field service and software for medical equipment",
+    "hero.h1":"Medical equipment, <em>under control</em>.",
+    "hero.sub":"We do electrical safety tests, maintenance and repairs for healthcare facilities in our area. And the tool we use every day — tests, PDF reports, due dates, client portal — you can use it too.",
+    "hero.cta1":"See the services","hero.cta2":"Try the demo",
+    "cta.note":"The demo opens in the browser, no sign-up.",
+    "chip1":"Tests with verdict","chip2":"PDF reports","chip3":"Works offline","chip4":"Client portal","chip5":"Excel import",
+    "vb.cls":"Class I · BF","vb1":"PE conductor resistance","vb2":"Equipment leakage","vb3":"Applied part BF",
+    "vb.stamp":"PASS","vb.cap":"Limits already set, verdict computed by the app.",
+    "sec.f.e":"The software, for technicians","sec.f.t":"All the work in one place",
+    "sec.f.s":"Assets, due dates, maintenance, work orders, spare parts, testing and a client portal.",
+    "f1t":"Electrical safety testing","f1d":"Pick the device and the kind of test: measurements and limits are already set. Enter the values, the verdict is computed for you and the report is ready to sign.",
+    "f2t":"Performance testing","f2d":"Ready-made checklists for defibrillators, ventilators, pumps, ultrasound, dental units and more, with expected values and N/A items. You can build your own, too.","f10t":"Planned maintenance","f10d":"In a single session you do maintenance, functional testing and electrical safety: one PDF report with everything, and the next due dates update automatically. Ready-made protocols per model.",
+    "f3t":"Work orders & spare parts","f3d":"Priority, hours, travel, parts used and photos. Stock with minimum levels, so the part is there when you need it.",
+    "f4t":"QR labels","f4d":"Print the label with code and QR straight from the app. Scan the code and the device record opens, always up to date.",
+    "f5t":"Works offline","f5d":"Basements and plant rooms have no signal: you keep working and sync later. Start from your Excel: import assets and due dates and the app maps the columns for you. Backup and export any time — the data is yours.",
+    "f6t":"Client portal","f6d":"Every client sees their machines, sends service requests and downloads their PDF reports, always up to date.",
+    "f7t":"Safety notices","f7d":"Log manufacturer recalls and field safety notices (FSN) and link the devices involved. For each one you track the action taken, so you always know what's left to handle.",
+    "f8t":"CND catalog","f8d":"Every device classified with the Italian Ministry of Health CND code: search by name and the app fills in CND, EMDN and CIVAB. Then filter and group by category.",
+    "f9t":"RFID tracking","f9d":"Inventories and audits in seconds with UHF RFID tags: sweep the reader and assets log themselves.","soon":"Coming soon",
+    "sec.sh.e":"The app","sec.sh.t":"A few screens",
+    "sh1":"Dashboard and due dates","sh2":"Safety test with verdict","sh3":"Report list","sh4":"Asset record","sh5":"Client portal sign-in",
+    "sec.p.e":"Fewer phone calls","sec.p.t":"Clients help themselves",
+    "sec.p.s":"Every client gets their own read-only access, always up to date.",
+    "p1":"<b>PDF reports</b> — clients download them when they need them, even during an inspection.",
+    "p2":"<b>Final versions only</b> — a report reaches the portal once it's complete and signed: the exact same document kept on file.",
+    "p3":"<b>Service requests</b> with photo and urgency, straight from the device.",
+    "p4":"<b>QR on the label</b> — scan it and the machine's record opens.",
+    "st.e":"Where it comes from",
+    "st.d":"<b>MedTrace started as a working tool, not a product.</b> It was built by a biomedical technician from Trieste — with five years at a major private hospital in London (HCA Healthcare group), up to a senior role — and a Clinical Engineering graduate with experience at the Italian Ministry of Health on medical-device classification (CND/EMDN). We use it in the field every day and it grows with what's actually needed. If you adopt it, you talk directly with the people who wrote it.",
+    "sec.pr.e":"The software","sec.pr.t":"Software pricing","pl1.name":"Freelance","pl1.per":"1 technician · launch price · list €490","pl1.b1":"All tests with verdict + PDF reports","pl1.b2":"Planned maintenance and due dates","pl1.b3":"Offline · import and export via Excel","pl1.cta":"Let’s talk","pl2.name":"Team","pl2.per":"2-5 technicians · launch price · list €1,200","pl2.b1":"Everything in Freelance, for more technicians","pl2.b2":"Client portal included","pl2.b3":"Spare-parts stock and work orders","pl2.b4":"Updates and support","pl2.cta":"Let’s talk","pl3.name":"Custom","pl3.price":"On request","pl3.per":"from €2,500/year","pl3.b1":"Unlimited users","pl3.b2":"Portal with your logo (white-label)","pl3.b3":"For larger facilities and subcontractors","pl3.cta":"Contact us","pl.yr":"/year","pl.free":"We’re looking for 2-3 early partners: full MedTrace free in exchange for feedback and a testimonial. Limited seats.",
+    "pr1.price":"Free","pr1.per":"for the first companies",
+    "pr1.b1":"Full MedTrace, everything included","pr1.b2":"In exchange for product feedback","pr1.b3":"Limited seats","pr1.cta":"Apply",
+    "pr2.per":"per organization · launch price",
+    "pr2.b1":"Your company's technicians included","pr2.b2":"Client portal included","pr2.b3":"Updates and support","pr2.b4":"Your data, always exportable (backup, Excel)","pr2.cta":"Let's talk",
+    "pr.note":"Prices excl. VAT · same-day activation · support and updates in every plan",
+    "q1":"Do I need to install anything?","a1":"No: MedTrace is a web app (PWA). Open it in the browser and add it to the Home screen of your phone, tablet or PC — it behaves like an app, no store and no installs.",
+    "q2":"Does it work without internet?","a2":"Yes. After the first sign-in you can work fully offline: data stays on the device and syncs to the cloud when you're back online.",
+    "q3":"Who owns the data?","a3":"You do. Each company sees only its own data — no other technician or company can access your clients. Export it any time (full backup and Excel), the cloud runs on EU servers, and if you ever leave you take everything with you.",
+    "q4":"Which tests does it cover?","a4":"Electrical safety testing for medical equipment and lab instruments (IEC 62353, 60601-1, 61010-1), with automatic limits and verdict, plus performance tests with checklists for the most common device families.",
+    "q5":"How many assets can it handle?","a5":"Thousands, without slowing down. Data sits on the device in a roomy local store and syncs to the cloud (EU servers) when you're online.",
+    "cta.t":"Try the demo",
+    "cta.s":"It comes with realistic data already loaded: open a test, generate a report, have a look at the portal.",
+    "cta.b":"Open the demo →",
+    "ft.tag":"MedTrace · Trieste, Italy · built by people doing biomedical service in the field",
+    "aria.theme":"Toggle theme","aria.menu":"Menu"
+  }
+};
+function setLang(l){
+  document.documentElement.lang = l;
+  const d = I18N[l] || I18N.it;
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const k = el.getAttribute("data-i18n");
+    if (d[k] != null) el.innerHTML = d[k];
+  });
+  document.title = d["t.title"];
+  const m = document.querySelector('meta[name="description"]');
+  if (m) m.setAttribute("content", d["t.desc"]);
+  document.getElementById("lang-it").setAttribute("aria-pressed", l === "it" ? "true" : "false");
+  document.getElementById("lang-en").setAttribute("aria-pressed", l === "en" ? "true" : "false");
+  document.getElementById("theme-btn").setAttribute("aria-label", d["aria.theme"]);
+  document.getElementById("menu-btn").setAttribute("aria-label", d["aria.menu"]);
+}
+document.getElementById("lang-it").addEventListener("click", () => setLang("it"));
+document.getElementById("lang-en").addEventListener("click", () => setLang("en"));
+setLang(((navigator.language || "it").toLowerCase().indexOf("it") === 0) ? "it" : "en");
+
+/* ───────────── tema ───────────── */
+document.getElementById("theme-btn").addEventListener("click", () => {
+  const cur = document.documentElement.getAttribute("data-theme");
+  document.documentElement.setAttribute("data-theme", cur === "dark" ? "light" : "dark");
+});
+
+/* ───────────── menu mobile ───────────── */
+const mBtn = document.getElementById("menu-btn");
+const mMenu = document.getElementById("mobile-menu");
+mBtn.addEventListener("click", () => {
+  const open = mMenu.classList.toggle("open");
+  mBtn.setAttribute("aria-expanded", open ? "true" : "false");
+  mBtn.textContent = open ? "✕" : "☰";
+});
+mMenu.querySelectorAll("a").forEach(a => a.addEventListener("click", () => {
+  mMenu.classList.remove("open");
+  mBtn.setAttribute("aria-expanded", "false");
+  mBtn.textContent = "☰";
+}));
+
+/* ───────────── menu: chiusura con Esc ───────────── */
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape" && mMenu.classList.contains("open")) {
+    mMenu.classList.remove("open");
+    mBtn.setAttribute("aria-expanded", "false");
+    mBtn.textContent = "☰";
+  }
+});
+
+/* ───────────── sezione attiva nella barra ───────────── */
+const spy = new IntersectionObserver(es => es.forEach(e => {
+  if (!e.isIntersecting) return;
+  document.querySelectorAll(".nav-links a").forEach(a => {
+    a.classList.toggle("active", a.getAttribute("href") === "#" + e.target.id);
+  });
+}), { rootMargin: "-40% 0px -55% 0px" });
+["funzioni","screenshot","portale","prezzi","faq"].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) spy.observe(el);
+});
+
+/* ───────────── reveal allo scroll ───────────── */
+const io = new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+}), { threshold: .12 });
+document.querySelectorAll(".rv").forEach(el => io.observe(el));
+</script>
+</body>
+</html>
