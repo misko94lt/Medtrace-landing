@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MedTrace — Privacy e Termini</title>
+<meta name="description" content="Informativa sulla privacy (art. 13 GDPR) e Termini di Servizio di MedTrace.">
+<meta name="robots" content="index,follow">
+<link rel="icon" type="image/png" href="img/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script>(function(){var d=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;document.documentElement.setAttribute("data-theme",d?"dark":"light");})();</script>
+<style>
+/* ───────────────────────── TOKENS ───────────────────────── */
+:root{
+  --accent:#2DD4BF; --accent-deep:#0F766E; --ok:#22C55E; --warn:#F59E0B;
+  --r:14px; --maxw:1080px;
+  --f-display:"IBM Plex Sans",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+[data-theme="light"]{
+  --bg:#F6F8F9; --surface:#FFFFFF; --surface2:#FCFDFD;
+  --border:#E3E9ED; --border2:#D3DCE2;
+  --text:#10171E; --text2:#46535F; --text3:#8593A0;
+  --frame:#0F141A; --chip:#0F766E12; --acc-text:#0F766E;
+  --shadow:0 14px 40px rgba(16,30,40,.10);
+}
+[data-theme="dark"]{
+  --bg:#0B0E13; --surface:#12161D; --surface2:#161B24;
+  --border:#1F2733; --border2:#2A3543;
+  --text:#EDF1F5; --text2:#9AA7B4; --text3:#5C6A78;
+  --frame:#06080B; --chip:#2DD4BF12; --acc-text:#2DD4BF;
+  --shadow:0 16px 48px rgba(0,0,0,.45);
+}
+/* ───────────────────────── BASE ───────────────────────── */
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--f-body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;transition:background .25s,color .25s}
+a{color:var(--acc-text);text-decoration:none}
+img{display:block;max-width:100%;height:auto}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px}
+.mono{font-family:var(--f-mono)}
+h1,h2,h3{font-family:var(--f-display);letter-spacing:-.015em}
+section{padding:72px 0;scroll-margin-top:78px}
+.eyebrow{font-size:11.5px;font-weight:600;letter-spacing:.12em;color:var(--acc-text);text-transform:uppercase;margin-bottom:14px}
+.sec-t{font-size:clamp(26px,4vw,34px);font-weight:700;margin-bottom:10px}
+.sec-s{color:var(--text2);max-width:620px;margin-bottom:36px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+svg.ic-line{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+/* ───────────────────────── NAV ───────────────────────── */
+nav{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.nav-in{display:flex;align-items:center;gap:18px;height:62px}
+.logo{display:flex;align-items:center;gap:9px;font-family:var(--f-display);font-weight:700;font-size:18px;color:var(--text)}
+.logo svg{width:34px;height:34px}
+.nav-links{display:flex;gap:20px;margin-left:auto;font-size:13.5px;font-weight:600}
+.nav-links a{color:var(--text2)}
+.nav-links a:hover{color:var(--acc-text)}
+.nav-links a.active{color:var(--acc-text)}
+.nav-tools{display:flex;align-items:center;gap:9px;margin-left:6px}
+.lang{display:flex;border:1px solid var(--border2);border-radius:9px;overflow:hidden}
+.lang button{background:transparent;border:0;color:var(--text3);font:600 12px var(--f-mono);padding:6px 10px;cursor:pointer}
+.lang button[aria-pressed="true"]{background:var(--chip);color:var(--acc-text)}
+.theme-btn,.menu-btn{background:transparent;border:1px solid var(--border2);border-radius:9px;width:35px;height:31px;cursor:pointer;font-size:15px;line-height:1;color:var(--text);display:flex;align-items:center;justify-content:center}
+.theme-btn svg{width:15px;height:15px}
+[data-theme="dark"] .icon-moon{display:none}
+[data-theme="light"] .icon-sun{display:none}
+.menu-btn{display:none}
+.mobile-menu{display:none;position:fixed;top:62px;left:0;right:0;z-index:49;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow);flex-direction:column;padding:6px 0 10px}
+.mobile-menu.open{display:flex}
+.mobile-menu a{padding:13px 26px;font-size:15px;font-weight:600;color:var(--text);border-top:1px solid var(--border)}
+.mobile-menu a:first-child{border-top:none}
+.mobile-menu a span{color:var(--text3);font:600 11px var(--f-mono);margin-right:12px}
+@media(max-width:760px){.nav-links{display:none}.menu-btn{display:flex}.nav-tools{margin-left:auto}}
+/* ───────────────────────── HERO ───────────────────────── */
+.hero{padding:84px 0 64px}
+.hero-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:54px;align-items:center}
+@media(max-width:880px){.hero-grid{grid-template-columns:1fr;gap:46px}}
+h1{font-size:clamp(34px,5.2vw,50px);font-weight:700;line-height:1.1;margin-bottom:18px}
+h1 em{font-style:normal;color:var(--acc-text)}
+.hero-sub{color:var(--text2);font-size:17.5px;max-width:540px;margin-bottom:28px}
+.cta-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.cta-note{font-size:12px;color:var(--text3);margin-bottom:24px}
+.btn{display:inline-block;font:600 15px var(--f-body);border-radius:11px;padding:13px 24px;cursor:pointer;border:1px solid transparent;transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-1px)}
+.btn-p{background:linear-gradient(135deg,#2DD4BF,#0D9488);color:#04211D;box-shadow:0 8px 22px rgba(20,170,150,.28)}
+.btn-g{border-color:var(--border2);color:var(--text)}
+.chips{display:flex;gap:9px;flex-wrap:wrap}
+.chip{font:500 12.5px var(--f-body);color:var(--acc-text);background:var(--chip);border:1px solid color-mix(in srgb,var(--accent) 26%,transparent);border-radius:99px;padding:6px 13px}
+/* ── elemento firma: verbale che si compila ── */
+.verbale{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);padding:22px 22px 26px;max-width:420px;margin:0 auto}
+.vb-head{font:600 11.5px var(--f-mono);color:var(--text3);letter-spacing:.06em;border-bottom:1px dashed var(--border2);padding-bottom:12px;margin-bottom:14px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.vb-head b{color:var(--acc-text)}
+.vrow{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:baseline;padding:9px 0;border-bottom:1px solid var(--border);opacity:0;transform:translateY(7px);animation:vIn .5s ease forwards}
+.vrow:nth-child(2){animation-delay:.25s}.vrow:nth-child(3){animation-delay:.6s}.vrow:nth-child(4){animation-delay:.95s}
+.vrow .lbl{font-size:13.5px;color:var(--text2)}
+.vrow .val{font:600 14px var(--f-mono);color:var(--text)}
+.vrow .lim{font:400 11.5px var(--f-mono);color:var(--text3)}
+.vrow .lim s{color:var(--ok);text-decoration:none;margin-left:6px;font-weight:600}
+.vb-foot{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-top:16px}
+.vb-cap{font:400 11px var(--f-mono);color:var(--text3);text-align:left;flex:1;min-width:150px}
+.stamp{font:700 17px var(--f-display);letter-spacing:.07em;color:var(--ok);border:3px solid var(--ok);border-radius:9px;padding:5px 13px;transform:rotate(-6deg) scale(1.4);opacity:0;animation:stampIn .4s cubic-bezier(.2,1.5,.4,1) 1.45s forwards;background:color-mix(in srgb,var(--ok) 7%,transparent)}
+@keyframes vIn{to{opacity:1;transform:none}}
+@keyframes stampIn{to{opacity:1;transform:rotate(-6deg) scale(1)}}
+/* ── onda divisoria ── */
+.wave{display:block;width:100%;height:42px;opacity:.5}
+/* ───────────────────────── FUNZIONI ───────────────────────── */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:880px){.cards{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.cards{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:22px;transition:border-color .2s,transform .2s}
+.card:hover{border-color:color-mix(in srgb,var(--accent) 45%,var(--border));transform:translateY(-2px)}
+.card .ic{color:var(--acc-text);margin-bottom:13px}
+.card .ic svg{width:25px;height:25px}
+.card h3{font-size:16.5px;font-weight:600;margin-bottom:7px}
+.card p{font-size:14px;color:var(--text2)}
+/* ───────────────────────── SCREENSHOT ───────────────────────── */
+.shots{display:flex;gap:22px;overflow-x:auto;scroll-snap-type:x mandatory;padding:12px 4px 20px;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+.shot{flex:0 0 auto;width:min(70vw,260px);scroll-snap-align:center}
+@media(max-width:560px){
+  .phone{border-width:6px;border-radius:26px}
+  .phone img{border-radius:19px}
+  .shot figcaption{font-size:11.5px}
+}
+.phone{border:9px solid var(--frame);border-radius:36px;overflow:hidden;box-shadow:var(--shadow);background:var(--frame)}
+.phone img{border-radius:26px;width:100%;height:auto}
+.shot figcaption{font:500 12px var(--f-body);color:var(--text3);text-align:center;margin-top:12px}
+/* ───────────────────────── PORTALE / STORIA ───────────────────────── */
+.split{display:grid;grid-template-columns:.9fr 1.1fr;gap:52px;align-items:center}
+@media(max-width:880px){.split{grid-template-columns:1fr;gap:40px}}
+.ticks{list-style:none;display:grid;gap:14px}
+.ticks li{display:flex;gap:12px;font-size:15px;color:var(--text2)}
+.ticks li b{color:var(--text)}
+.ticks .tk{color:var(--ok);font-weight:700;flex:0 0 auto}
+.story{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:var(--r);padding:30px 30px;max-width:760px;margin:0 auto}
+.story p{color:var(--text2);font-size:16px}
+.story b{color:var(--text)}
+/* ───────────────────────── PREZZI ───────────────────────── */
+.plans{display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:780px;margin:0 auto}
+@media(max-width:700px){.plans{grid-template-columns:1fr}}
+.plan{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:28px}
+.plan.hot{border-color:color-mix(in srgb,var(--accent) 55%,var(--border));box-shadow:var(--shadow)}
+.plan .name{font:600 13px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--acc-text);margin-bottom:12px}
+.plan .price{font-family:var(--f-display);font-size:36px;font-weight:700}
+.plan .per{color:var(--text3);font-size:13px;margin-bottom:16px}
+.plan ul{list-style:none;display:grid;gap:9px;margin:16px 0 22px}
+.plan li{font-size:14px;color:var(--text2);display:flex;gap:9px}
+.plan li::before{content:"✓";color:var(--ok);font-weight:700}
+.pr-note{text-align:center;font:400 12.5px var(--f-body);color:var(--text3);margin-top:20px}
+/* ───────────────────────── FAQ / CTA / FOOTER ───────────────────────── */
+.faq{max-width:760px;margin:0 auto;display:grid;gap:10px}
+details{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 20px}
+summary{cursor:pointer;font-weight:600;font-size:15px;list-style:none;display:flex;justify-content:space-between;gap:10px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";color:var(--acc-text);font:600 18px var(--f-mono)}
+details[open] summary::after{content:"–"}
+details p{color:var(--text2);font-size:14px;margin-top:10px}
+.final{background:var(--surface2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);text-align:center}
+footer{padding:34px 0 42px;color:var(--text3);font-size:13px}
+.foot-in{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;align-items:center}
+/* ───────────────────────── REVEAL / MOTION ───────────────────────── */
+.rv{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease}
+.rv.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  .vrow,.stamp{opacity:1;transform:rotate(-6deg)}
+  .vrow{transform:none}
+  .rv{opacity:1;transform:none}
+}
+</style>
+<style>
+.legalhead{display:flex;align-items:center;justify-content:space-between;max-width:860px;margin:0 auto;padding:18px 22px;border-bottom:1px solid var(--border)}
+.legalhead .logo{font-family:var(--f-display);font-weight:800;font-size:19px;display:flex;align-items:center;gap:8px;color:var(--text)}
+.legalhead .logo svg{width:26px;height:26px}
+.backlink{color:var(--text2);font-size:14px}
+.legal{max-width:860px;margin:0 auto;padding:34px 22px 64px}
+.legal h1{font-family:var(--f-display);font-size:30px;margin-bottom:6px}
+.legal .lead{color:var(--text2);margin-bottom:8px}
+.legal .upd{color:var(--text3);font-size:13px;font-family:var(--f-mono);margin-bottom:26px}
+.legal h2{font-family:var(--f-display);font-size:22px;margin:40px 0 10px;padding-top:16px;border-top:1px solid var(--border)}
+.legal h3{font-size:15.5px;margin:22px 0 6px;color:var(--acc-text)}
+.legal p{color:var(--text2);margin-bottom:10px;font-size:15px;line-height:1.62}
+.toc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 20px;margin:6px 0 10px}
+.toc b{font-size:13px;color:var(--text3);text-transform:uppercase;letter-spacing:.04em}
+.toc a{display:inline-block;margin-right:18px;padding:4px 0;font-weight:600}
+</style>
+</head>
+<body>
+<div class="legalhead">
+  <a class="logo" href="index.html"><svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="#2DD4BF" stroke-linecap="round" stroke-linejoin="round"><path d="M8 24 Q13 14 18 24 Q23 34 28 24" stroke-width="2.6"/><path d="M3 24 Q11 10 18 24 Q25 38 33 24" stroke-width="2.6"/><circle cx="40" cy="24" r="3.6" fill="#2DD4BF" stroke="none"/></g></svg> Med<span style="color:var(--acc-text)">Trace</span></a>
+  <div style="display:flex;align-items:center;gap:16px">
+    <a class="backlink" href="index.html">← Torna al sito</a>
+    <button class="theme-btn" id="tbtn" aria-label="Cambia tema"><svg class="ic-line icon-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="ic-line icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></button>
+  </div>
+</div>
+<main class="legal">
+  <h1>Privacy e Termini</h1>
+  <p class="lead">Informativa sulla privacy resa ai sensi dell’art. 13 del Regolamento (UE) 2016/679 (GDPR) e Termini di Servizio della piattaforma MedTrace.</p>
+  <p class="upd">Ultimo aggiornamento: [data] · Versione [X.X]</p>
+  <div class="toc"><b>In questa pagina</b><br><a href="#privacy">Informativa Privacy</a><a href="#termini">Termini di Servizio</a></div>
+  <h2 id="privacy">1. Informativa sulla Privacy (art. 13 GDPR)</h2>
+<p>Ai sensi dell’art. 13 del Regolamento (UE) 2016/679 (“GDPR”) e del D.Lgs. 196/2003 come modificato dal D.Lgs. 101/2018, La informiamo sul trattamento dei dati personali effettuato tramite la piattaforma MedTrace.</p>
+<h3>1.1 Titolare del trattamento</h3>
+<p>[RAGIONE SOCIALE] S.n.c. — sede legale in [INDIRIZZO, CAP, CITTÀ] — P.IVA/C.F. [P.IVA] — PEC [PEC] — email [EMAIL DI CONTATTO] — (di seguito anche “il Fornitore”).</p>
+<p>Responsabile della protezione dei dati (DPO), ove designato: [NOME/EMAIL DPO — oppure “non designato, non obbligatorio”].</p>
+<h3>1.2 Doppio ruolo del Fornitore</h3>
+<p>Il Fornitore agisce come TITOLARE del trattamento per i dati descritti nella presente informativa (dati di contatto, di account e di utilizzo della piattaforma raccolti direttamente dagli utenti).</p>
+<p>Il Fornitore agisce invece come RESPONSABILE del trattamento (art. 28 GDPR) per i dati immessi nella piattaforma per conto della struttura sanitaria cliente, che ne è Titolare. Tali trattamenti sono disciplinati dall’Accordo sul Trattamento dei Dati (DPA) sottoscritto con il cliente.</p>
+<h3>1.3 Tipologie di dati trattati</h3>
+<p>Dati identificativi e di contatto degli utenti: nome, cognome, email, telefono, ruolo aziendale, credenziali di accesso.</p>
+<p>Dati tecnici e di navigazione: indirizzo IP, log di accesso e delle operazioni svolte nell’applicazione, dati del dispositivo.</p>
+<p>Dati relativi al rapporto contrattuale e amministrativo-contabile.</p>
+<p>La piattaforma è destinata a trattare dati relativi alle apparecchiature e alla loro manutenzione, e NON dati sanitari dei pazienti né altre categorie particolari di dati (art. 9 GDPR). Il cliente si impegna a non immettere dati personali di pazienti o dati particolari.</p>
+<h3>1.4 Finalità e basi giuridiche</h3>
+<p>Erogazione del servizio ed esecuzione del contratto — art. 6.1.b GDPR.</p>
+<p>Adempimento di obblighi di legge, fiscali e contabili — art. 6.1.c GDPR.</p>
+<p>Sicurezza informatica, conservazione dei log e prevenzione di abusi — legittimo interesse, art. 6.1.f GDPR.</p>
+<p>Assistenza e comunicazioni di servizio — art. 6.1.b/f GDPR.</p>
+<p>Eventuale marketing diretto su prodotti/servizi analoghi — previo consenso, art. 6.1.a GDPR (revocabile in ogni momento).</p>
+<h3>1.5 Destinatari dei dati</h3>
+<p>I dati possono essere trattati da personale autorizzato e istruito del Fornitore e comunicati a fornitori che agiscono in qualità di responsabili del trattamento, tra cui i servizi di hosting e database (Supabase, regione UE — EU-West) ed eventuali servizi di posta elettronica e assistenza. I dati possono essere comunicati ad autorità quando obbligatorio per legge. L’elenco aggiornato dei responsabili è disponibile su richiesta.</p>
+<h3>1.6 Trasferimenti fuori dall’Unione Europea</h3>
+<p>I dati sono ospitati all’interno dell’Unione Europea (Supabase, regione EU-West). Non sono previsti trasferimenti verso Paesi extra-UE. Qualora dovessero rendersi necessari, avverranno esclusivamente in presenza di garanzie adeguate ai sensi degli artt. 44-49 GDPR (es. clausole contrattuali tipo).</p>
+<h3>1.7 Periodo di conservazione</h3>
+<p>Dati contrattuali e di account: per la durata del rapporto e successivamente per i termini di legge.</p>
+<p>Dati amministrativo-contabili: per il termine di legge (di norma 10 anni).</p>
+<p>Log tecnici: per [X] mesi.</p>
+<p>Dati per marketing: fino alla revoca del consenso.</p>
+<h3>1.8 Diritti dell’interessato</h3>
+<p>L’interessato può esercitare i diritti di cui agli artt. 15-22 GDPR (accesso, rettifica, cancellazione, limitazione, portabilità, opposizione) e revocare il consenso, scrivendo a [EMAIL/PEC].</p>
+<h3>1.9 Reclamo all’Autorità</h3>
+<p>L’interessato ha diritto di proporre reclamo al Garante per la protezione dei dati personali (www.garanteprivacy.it).</p>
+<h3>1.10 Natura del conferimento e modifiche</h3>
+<p>Il conferimento dei dati necessari è indispensabile per l’uso del servizio; il rifiuto può impedirne la fornitura. La presente informativa può essere aggiornata; la versione vigente è indicata dalla data in calce.</p>
+<p>Versione [X.X] — [data].</p>
+<h2 id="termini">2. Termini di Servizio (B2B)</h2>
+<p>I presenti Termini regolano l’uso della piattaforma MedTrace tra [RAGIONE SOCIALE] S.n.c. (“Fornitore”) e il cliente professionale o la struttura sanitaria che sottoscrive il servizio (“Cliente”). L’attivazione del servizio comporta l’accettazione dei presenti Termini.</p>
+<h3>Art. 1 — Definizioni</h3>
+<p>“Servizio”/“Piattaforma”: il software MedTrace fornito in modalità SaaS. “Utenti”: le persone autorizzate dal Cliente ad accedere. “Dati del Cliente”: i dati immessi dal Cliente o dai suoi Utenti. “Canone”: il corrispettivo per il Servizio.</p>
+<h3>Art. 2 — Oggetto</h3>
+<p>Il Fornitore concede al Cliente una licenza d’uso non esclusiva, non trasferibile e revocabile, per la durata dell’abbonamento, della piattaforma MedTrace per la gestione della manutenzione delle apparecchiature biomedicali, il tracciamento RFID degli asset, le verifiche di sicurezza elettrica (IEC 62353) e funzionali, la generazione di referti PDF e il portale clienti.</p>
+<h3>Art. 3 — Durata e rinnovo</h3>
+<p>Il contratto ha durata di [12] mesi e si rinnova automaticamente per uguali periodi salvo disdetta da comunicarsi con preavviso di [30/60] giorni mediante PEC. (clausola soggetta ad approvazione specifica — v. in calce)</p>
+<h3>Art. 4 — Corrispettivi e pagamento</h3>
+<p>Il Canone è quello indicato nell’offerta/preventivo accettato. La fatturazione avviene [periodicità]. In caso di ritardato pagamento si applicano gli interessi di mora ex D.Lgs. 231/2002 e il Fornitore può sospendere il Servizio previa comunicazione.</p>
+<h3>Art. 5 — Obblighi del Cliente e uso accettabile</h3>
+<p>Utilizzare il Servizio in modo lecito e conforme alla normativa applicabile.</p>
+<p>NON immettere dati personali di pazienti né categorie particolari di dati (art. 9 GDPR).</p>
+<p>Custodire le credenziali e garantire la veridicità dei dati immessi.</p>
+<p>Non effettuare reverse engineering, copia, rivendita o accesso non autorizzato alla Piattaforma.</p>
+<h3>Art. 6 — Proprietà intellettuale</h3>
+<p>Il software, il codice sorgente, i marchi e i contenuti della Piattaforma sono e restano di proprietà esclusiva del Fornitore. Al Cliente è concessa la sola licenza d’uso. I Dati del Cliente restano di proprietà del Cliente.</p>
+<h3>Art. 7 — Trattamento dei dati personali</h3>
+<p>Il trattamento dei dati personali effettuato dal Fornitore per conto del Cliente è disciplinato dall’Accordo sul Trattamento dei Dati (DPA, art. 28 GDPR), che costituisce parte integrante del presente contratto.</p>
+<h3>Art. 8 — Livelli di servizio (SLA)</h3>
+<p>Il Fornitore si impegna a una disponibilità del Servizio pari al [99,X]% su base mensile, esclusi gli interventi di manutenzione programmata e le cause di forza maggiore. In caso di mancato rispetto, al Cliente è riconosciuto [un credito di servizio] quale rimedio esclusivo. Sono previsti backup con frequenza […].</p>
+<h3>Art. 9 — Manutenzione e aggiornamenti</h3>
+<p>Il Fornitore può aggiornare e migliorare il Servizio. Gli interventi di manutenzione programmata sono comunicati con preavviso ove possibile.</p>
+<h3>Art. 10 — Limitazione di responsabilità</h3>
+<p>Nei limiti consentiti dalla legge, la responsabilità complessiva del Fornitore è limitata all’importo dei corrispettivi pagati dal Cliente nei [12] mesi precedenti l’evento. Sono esclusi i danni indiretti, la perdita di profitto e la perdita di dati. Restano ferme le responsabilità non escludibili per legge, in particolare per dolo e colpa grave. Il Fornitore non risponde dell’uso improprio del Servizio né delle decisioni tecniche o cliniche assunte dal Cliente. (clausola soggetta ad approvazione specifica — v. in calce)</p>
+<h3>Art. 11 — Esclusione della natura di dispositivo medico</h3>
+<p>MedTrace è uno strumento gestionale e amministrativo e NON è un dispositivo medico ai sensi del Regolamento (UE) 2017/745. Non svolge alcuna funzione diagnostica, terapeutica o di monitoraggio clinico. La responsabilità professionale degli esiti delle verifiche di sicurezza elettrica e funzionali, e di ogni valutazione di conformità, resta in capo al tecnico qualificato che le esegue e le sottoscrive.</p>
+<h3>Art. 12 — Sospensione e risoluzione</h3>
+<p>Il Fornitore può sospendere o risolvere il contratto in caso di inadempimento, mancato pagamento o uso illecito. Si applica la clausola risolutiva espressa ai sensi dell’art. 1456 c.c. (clausola soggetta ad approvazione specifica — v. in calce)</p>
+<h3>Art. 13 — Restituzione e portabilità dei dati</h3>
+<p>Alla cessazione del rapporto, il Cliente può esportare i propri dati entro [30] giorni. Decorso tale termine, il Fornitore provvede alla cancellazione, salvo obblighi di conservazione di legge.</p>
+<h3>Art. 14 — Riservatezza e Art. 15 — Forza maggiore</h3>
+<p>Ciascuna parte mantiene riservate le informazioni dell’altra. Nessuna parte è responsabile per inadempimenti dovuti a cause di forza maggiore.</p>
+<h3>Art. 16 — Modifiche</h3>
+<p>Eventuali modifiche ai presenti Termini sono comunicate con preavviso; la prosecuzione dell’uso del Servizio ne comporta l’accettazione.</p>
+<h3>Art. 17 — Legge applicabile e foro competente</h3>
+<p>Il contratto è regolato dalla legge italiana. Per ogni controversia è competente in via esclusiva il Foro di [CITTÀ]. (clausola soggetta ad approvazione specifica — v. in calce)</p>
+<h3>Approvazione specifica delle clausole (artt. 1341 e 1342 c.c.)</h3>
+<p>Il Cliente, ai sensi degli artt. 1341 e 1342 c.c., approva specificamente le seguenti clausole:</p>
+<h3>Art. 3 (rinnovo automatico e disdetta); Art. 4 (sospensione per mancato pagamento); Art. 10 (limitazione di responsabilità); Art. 12 (clausola risolutiva espressa); Art. 17 (foro competente esclusivo).</h3>
+</main>
+<footer id="contatti">
+  <div class="wrap foot-in">
+    <span>MedTrace · Trieste, Italia</span>
+    <span><a href="mailto:info@ESEMPIO.it">info@ESEMPIO.it</a> · <a href="index.html">Home</a> · <span class="mono">© 2026 · P.IVA —</span></span>
+  </div>
+</footer>
+<script>document.getElementById("tbtn").addEventListener("click",function(){var h=document.documentElement;h.setAttribute("data-theme",h.getAttribute("data-theme")==="dark"?"light":"dark");});</script>
+</body>
+</html>
